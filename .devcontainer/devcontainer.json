@@ -1,0 +1,60 @@
+{
+	"name": "Example devcontainer for add-on repositories",
+	"image": "ghcr.io/home-assistant/devcontainer:2-addons",
+	"appPort": [
+		"7123:8123",
+		"7357:4357"
+	],
+	"postStartCommand": "bash devcontainer_bootstrap",
+	"runArgs": [
+		"-e",
+		"GIT_EDITOR=code --wait",
+		"--privileged"
+	],
+	"containerEnv": {
+		"WORKSPACE_DIRECTORY": "${containerWorkspaceFolder}"
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-python.python",
+				"github.vscode-pull-request-github",
+				"ryanluker.vscode-coverage-gutters",
+				"ms-python.vscode-pylance",
+				"ms-python.pylint",
+				"streetsidesoftware.code-spell-checker",
+				"ms-azuretools.vscode-docker",
+				"EditorConfig.EditorConfig",
+				"github.vscode-github-actions",
+				"eamodio.gitlens",
+				"oderwat.indent-rainbow",
+				"ms-python.isort",
+				"yzhang.markdown-all-in-one",
+				"christian-kohler.path-intellisense",
+				"ms-python.black-formatter",
+				"redhat.vscode-yaml",
+				"DmitryDorofeev.empty-indent",
+				"timonwong.shellcheck",
+				"esbenp.prettier-vscode"
+			],
+			"settings": {
+				"terminal.integrated.profiles.linux": {
+					"zsh": {
+						"path": "/usr/bin/zsh"
+					}
+				},
+				"terminal.integrated.defaultProfile.linux": "zsh",
+				"editor.formatOnPaste": false,
+				"editor.formatOnSave": true,
+				"editor.formatOnType": true,
+				"files.trimTrailingWhitespace": true
+			}
+		}
+	},
+"mounts": [
+  "type=bind,source=${localWorkspaceFolder}/custom_components,target=/config/custom_components,consistency=delegated",
+  "type=volume,target=/var/lib/docker",
+  "type=volume,target=/mnt/supervisor"
+]
+
+}
