@@ -59,3 +59,7 @@ file.
 ## License
 
 By contributing, you agree that your contributions will be licensed under its MIT License.
+
+# Local dev env
+
+This repository contains devcontainer that spins the whole HA at once so you can debug this add-on locally
