@@ -27,4 +27,7 @@ scenes.yaml
 scripts.yaml
 secrets.yaml
 
-/venv
+.venv
+
+# Home Assistant data
+ha_config/

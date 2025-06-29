@@ -1,11 +1,19 @@
 {
-  "name": "Example devcontainer for add-on repositories",
-  "image": "ghcr.io/home-assistant/devcontainer:2-addons",
-  "appPort": ["7123:8123", "7357:4357"],
-  "postStartCommand": "bash devcontainer_bootstrap",
-  "runArgs": ["-e", "GIT_EDITOR=code --wait", "--privileged"],
+  "name": "HA + uv devcontainer",
+  "image": "mcr.microsoft.com/devcontainers/python:3.13",
+  "appPort": [
+    "7123:8123"
+  ],
+  "postCreateCommand": "bash .devcontainer/post_create_command.sh",
+  "runArgs": [
+    "-e",
+    "GIT_EDITOR=code --wait",
+    "--privileged"
+  ],
   "containerEnv": {
-    "WORKSPACE_DIRECTORY": "${containerWorkspaceFolder}"
+    "WORKSPACE_DIRECTORY": "${containerWorkspaceFolder}",
+    // keep uv cache writable even when container runs as non-root
+    "UV_CACHE_DIR": "/config/.uv_cache" // avoids Issue #128214 :contentReference[oaicite:2]{index=2}
   },
   "customizations": {
     "vscode": {
@@ -45,8 +53,18 @@
     }
   },
   "mounts": [
-    "type=bind,source=${localWorkspaceFolder}/custom_components,target=/config/custom_components,consistency=delegated",
-    "type=volume,target=/var/lib/docker",
-    "type=volume,target=/mnt/supervisor"
-  ]
+    "type=bind,source=${localWorkspaceFolder}/custom_components,target=/config/custom_components",
+    "type=bind,source=${localWorkspaceFolder}/configuration.yaml,target=/config/configuration.yaml",
+    "type=bind,source=${localWorkspaceFolder}/ha_config,target=/config"
+  ],
+  "features": {
+    // common CLI niceties
+    "ghcr.io/devcontainers/features/common-utils:2": {},
+    // add ffmpeg (and anything else) via apt
+    "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
+      "packages": [
+        "ffmpeg"
+      ]
+    }
+  }
 }

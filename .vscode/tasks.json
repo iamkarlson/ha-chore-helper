@@ -4,15 +4,7 @@
     {
       "label": "Start Home Assistant",
       "type": "shell",
-      "command": "supervisor_run",
-      "group": {
-        "kind": "test",
-        "isDefault": true
-      },
-      "presentation": {
-        "reveal": "always",
-        "panel": "new"
-      },
+      "command": "hass -c /config",
       "problemMatcher": []
     }
   ]
