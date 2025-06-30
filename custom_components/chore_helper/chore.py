@@ -153,9 +153,10 @@ class Chore(RestoreEntity):
         """When sensor is removed from HA, remove it and its calendar entity."""
         await super().async_will_remove_from_hass()
         del self.hass.data[const.DOMAIN][const.SENSOR_PLATFORM][self.entity_id]
-        self.hass.data[const.DOMAIN][const.CALENDAR_PLATFORM].remove_entity(
-            self.entity_id
-        )
+        if const.CALENDAR_PLATFORM in self.hass.data[const.DOMAIN]:
+            self.hass.data[const.DOMAIN][const.CALENDAR_PLATFORM].remove_entity(
+                self.entity_id
+            )
 
     @property
     def unique_id(self) -> str:
