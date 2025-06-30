@@ -1,5 +1,5 @@
 {
-  "name": "HA + uv devcontainer",
+  "name": "HA Chore Helper Development",
   "image": "mcr.microsoft.com/devcontainers/python:3.13",
   "appPort": [
     "7123:8123"
@@ -12,27 +12,29 @@
   ],
   "containerEnv": {
     "WORKSPACE_DIRECTORY": "${containerWorkspaceFolder}",
-    // keep uv cache writable even when container runs as non-root
-    "UV_CACHE_DIR": "/config/.uv_cache" // avoids Issue #128214 :contentReference[oaicite:2]{index=2}
+    "UV_CACHE_DIR": "/home/vscode/.uv_cache",
+    "PYTHONPATH": "/workspaces/ha-chore-helper/custom_components"
   },
   "customizations": {
     "vscode": {
       "extensions": [
         "ms-python.python",
-        "github.vscode-pull-request-github",
-        "ryanluker.vscode-coverage-gutters",
         "ms-python.vscode-pylance",
         "ms-python.pylint",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "charliermarsh.ruff",
+        "ms-python.mypy-type-checker",
+        "github.vscode-pull-request-github",
+        "ryanluker.vscode-coverage-gutters",
         "streetsidesoftware.code-spell-checker",
         "ms-azuretools.vscode-docker",
         "EditorConfig.EditorConfig",
         "github.vscode-github-actions",
         "eamodio.gitlens",
         "oderwat.indent-rainbow",
-        "ms-python.isort",
         "yzhang.markdown-all-in-one",
         "christian-kohler.path-intellisense",
-        "ms-python.black-formatter",
         "redhat.vscode-yaml",
         "DmitryDorofeev.empty-indent",
         "timonwong.shellcheck",
@@ -48,22 +50,39 @@
         "editor.formatOnPaste": false,
         "editor.formatOnSave": true,
         "editor.formatOnType": true,
-        "files.trimTrailingWhitespace": true
+        "files.trimTrailingWhitespace": true,
+        "python.defaultInterpreterPath": "/workspaces/ha-chore-helper/.venv/bin/python",
+        "python.linting.enabled": true,
+        "python.linting.pylintEnabled": true,
+        "python.formatting.provider": "black",
+        "python.sortImports.args": [
+          "--profile",
+          "black"
+        ],
+        "[python]": {
+          "editor.defaultFormatter": "ms-python.black-formatter",
+          "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+          }
+        },
+        "mypy.runUsingActiveInterpreter": true,
+        "ruff.args": [
+          "--config",
+          "/config/pyproject.toml"
+        ]
       }
     }
   },
   "mounts": [
-    "type=bind,source=${localWorkspaceFolder}/custom_components,target=/config/custom_components",
-    "type=bind,source=${localWorkspaceFolder}/configuration.yaml,target=/config/configuration.yaml",
-    "type=bind,source=${localWorkspaceFolder}/ha_config,target=/config"
+    "type=bind,source=${localWorkspaceFolder},target=/config",
+    "type=volume,source=ha-chore-helper-uv-cache,target=/tmp/.uv_cache"
   ],
   "features": {
-    // common CLI niceties
     "ghcr.io/devcontainers/features/common-utils:2": {},
-    // add ffmpeg (and anything else) via apt
     "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
       "packages": [
-        "ffmpeg"
+        "ffmpeg",
+        "git"
       ]
     }
   }

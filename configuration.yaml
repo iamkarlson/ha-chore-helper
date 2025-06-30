@@ -1,8 +1,32 @@
-# https://www.home-assistant.io/integrations/default_config/
-default_config:
+homeassistant:
+  name: Development
+  unit_system: metric
+  time_zone: UTC
 
-# https://www.home-assistant.io/integrations/logger/
+# Enable the web interface
+http:
+  server_port: 8123
+
+# Enable logging
 logger:
   default: info
   logs:
     custom_components.chore_helper: debug
+
+# Enable frontend
+frontend:
+
+# Enable API
+api:
+
+# Enable config flow for integrations
+config:
+
+# Enable system health
+system_health:
+
+# Enable file editor
+file_editor:
+
+# Load custom components
+chore_helper:

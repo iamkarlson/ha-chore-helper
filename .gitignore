@@ -11,23 +11,27 @@ __pycache__
 coverage.xml
 
 
-# Home Assistant configuration
-.cloud
-.HA_VERSION
-.storage
-automations.yaml
-blueprints
-configuration.yaml
-!/configuration.yaml
-deps
-home-assistant_v2*
-home-assistant.log*
-tts
-scenes.yaml
-scripts.yaml
-secrets.yaml
-
-.venv
-
 # Home Assistant data
 ha_config/
+# uv
+.venv/
+uv.lock
+
+# Development
+.pytest_cache/
+.coverage
+htmlcov/
+.mypy_cache/
+.ruff_cache/
+
+# Home Assistant testing
+ha_config/
+testing_config/
+
+# IDE
+.vscode/settings.json
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

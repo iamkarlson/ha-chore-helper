@@ -1,64 +1,66 @@
 #!/usr/bin/env bash
 
-install_extension() {
-    /usr/bin/code --install-extension $1
-    /usr/bin/code-insiders --install-extension $1
-}
-
-# Install VS Code extensions into VS Code in desktop so we can try
-install_extension ms-vscode-remote.remote-containers
-install_extension ms-azuretools.vscode-docker
-install_extension streetsidesoftware.code-spell-checker
-install_extension chrisdias.vscode-opennewinstance
-install_extension mads-hartmann.bash-ide-vscode
-install_extension rogalmic.bash-debug
-
 set -e
 
-export HA_VERSION="2025.6.3"
-echo "Current dir: ${PWD}"
-echo "Contents of current dir:"
-ls -la
-echo -e "\n\n\n\n\n"
+echo "🚀 Setting up HA Chore Helper development environment..."
+echo "Current directory: $(pwd)"
 
-curl -LsSf https://astral.sh/uv/install.sh | sh 
-uv venv .venv 
-source .venv/bin/activate 
-
-echo "Downloading lists of Home Assistant version $HA_VERSION dependencies"
-curl -sL https://raw.githubusercontent.com/home-assistant/core/$HA_VERSION/homeassistant/package_constraints.txt -o /tmp/constraints.txt 
-curl -sL https://raw.githubusercontent.com/home-assistant/core/$HA_VERSION/requirements.txt  -o /tmp/requirements.txt 
-curl -sL https://raw.githubusercontent.com/home-assistant/core/$HA_VERSION/requirements_all.txt -o /tmp/requirements_all.txt
-
-# home assistant requirements file contains `-c homeassistant/package_constraints.txt` at the top so it's build with the constraints
-# we need to remove that line so uv can install the requirements
-sed -i '/-c homeassistant\/package_constraints.txt/d' /tmp/requirements.txt
-
-# same thing for requirements_all.txt but with `-r requirements.txt`
-sed -i '/-r requirements.txt/d' /tmp/requirements_all.txt
-
-uv pip install --constraint /tmp/constraints.txt -r /tmp/requirements.txt
-uv pip install --constraint /tmp/constraints.txt -r /tmp/requirements_all.txt
-
-uv pip install --constraint /tmp/constraints.txt homeassistant
-
-# find the exact version Home Assistant wants and install it
-HF_VERSION=$(grep -E '^home-assistant-frontend==' /tmp/constraints.txt)
-if [ -n "$HF_VERSION" ]; then
-  echo "Installing $HF_VERSION"
-  uv pip install "$HF_VERSION"
+# Install uv if not present
+if ! command -v uv &> /dev/null; then
+    echo "Installing uv..."
+    curl -LsSf https://astral.sh/uv/install.sh | sh
+    export PATH="$HOME/.cargo/bin:$PATH"
 fi
 
-REQS=$(jq -r '.requirements[]' custom_components/chore_helper/manifest.json)
+# Create virtual environment and install dependencies
+echo "Creating virtual environment..."
+uv venv .venv
+source .venv/bin/activate
 
-echo "Installing requirements: $REQS"
+echo "Installing development dependencies..."
+uv sync --extra dev --extra test
 
-if [ -n "$REQS" ]; then
-  echo "Installing integration requirements with uv: $REQS"
-  uv pip install $REQS
+# Install integration dependencies from manifest.json
+echo "Installing integration dependencies..."
+if [ -f "custom_components/chore_helper/manifest.json" ]; then
+    REQUIREMENTS=$(python -c "
+import json
+with open('custom_components/chore_helper/manifest.json') as f:
+    manifest = json.load(f)
+    reqs = manifest.get('requirements', [])
+    if reqs:
+        print(' '.join(reqs))
+    else:
+        print('No requirements found')
+")
+
+    if [ "$REQUIREMENTS" != "No requirements found" ] && [ -n "$REQUIREMENTS" ]; then
+        echo "Installing: $REQUIREMENTS"
+        uv add $REQUIREMENTS
+    fi
 fi
 
+# Set up pre-commit hooks
+echo "Setting up pre-commit hooks..."
+uv run pre-commit install
 
-
-# Optionally, you can add a user to Home Assistant
-# hass --script auth -d /config add admin admin || true
+echo "✅ Development environment setup complete!"
+echo ""
+echo "🔧 Available commands:"
+echo "  uv run pytest                 - Run tests"
+echo "  uv run black .                - Format code"
+echo "  uv run isort .                - Sort imports"
+echo "  uv run pylint custom_components - Lint code"
+echo "  uv run mypy custom_components  - Type check"
+echo "  uv run ruff check .           - Lint with ruff"
+echo "  uv run ruff format .          - Format with ruff"
+echo ""
+echo "🏃 To start Home Assistant:"
+echo "  source .venv/bin/activate"
+echo "  hass -c /config --debug"
+echo ""
+echo "📁 Directory structure:"
+echo "  $(pwd)                   - Your repo (with pyproject.toml, etc.)"
+echo "  $(pwd)/custom_components - Your component source"
+echo "  /config                  - Home Assistant config (ha_config folder)"
+echo "  /config/custom_components - Component symlinked for HA"
