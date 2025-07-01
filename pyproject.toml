@@ -3,9 +3,9 @@ name = "ha-chore-helper"
 version = "0.1.0"
 description = "A Home Assistant helper integration for managing recurring chores"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.13.2"
 authors = [
-    { name = "Georgy Grigoryev", email = "iamkarlson@gmail.com" },
+    { name = "Your Name", email = "your.email@example.com" },
 ]
 classifiers = [
     "Development Status :: 4 - Beta",
@@ -13,20 +13,11 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
 ]
 
-# Core Home Assistant dependencies for development/testing
-dependencies = [
-    "homeassistant>=2025.6.0",
-    "aiohttp",
-    "voluptuous",
-    "PyYAML",
-    "python-dateutil",
-    "pytz",
-]
+# Core dependencies - minimal since HA is pre-installed in the container
+dependencies = []
 
 [project.optional-dependencies]
 # Development dependencies
@@ -52,16 +43,11 @@ test = [
     "freezegun>=1.2.0",
 ]
 
-# Full Home Assistant for local development
-full = [
-    "homeassistant[all]>=2025.6.0",
-]
-
 # Tool configuration for Home Assistant custom component development
 
 # Black formatting
 [tool.black]
-target-version = ["py311"]
+target-version = ["py313"]
 line-length = 88
 include = '\.pyi?$'
 exclude = '''
@@ -89,7 +75,7 @@ known_third_party = ["homeassistant"]
 
 # Ruff linting
 [tool.ruff]
-target-version = "py311"
+target-version = "py313"
 line-length = 88
 select = [
     "E",  # pycodestyle errors
@@ -111,7 +97,7 @@ ignore = [
 
 # MyPy type checking
 [tool.mypy]
-python_version = "3.11"
+python_version = "3.13"
 check_untyped_defs = true
 disallow_incomplete_defs = true
 disallow_untyped_calls = true

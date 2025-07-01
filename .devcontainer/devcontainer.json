@@ -1,44 +1,36 @@
 {
   "name": "HA Chore Helper Development",
-  "image": "mcr.microsoft.com/devcontainers/python:3.13",
-  "appPort": [
-    "7123:8123"
-  ],
-  "postCreateCommand": "bash .devcontainer/post_create_command.sh",
-  "runArgs": [
-    "-e",
-    "GIT_EDITOR=code --wait",
-    "--privileged"
-  ],
+  "image": "thomasloven/hass-custom-devcontainer",
+  "postCreateCommand": "sudo -E container setup-dev",
+  "appPort": ["7123:8123"],
   "containerEnv": {
-    "WORKSPACE_DIRECTORY": "${containerWorkspaceFolder}",
-    "UV_CACHE_DIR": "/home/vscode/.uv_cache",
-    "PYTHONPATH": "/workspaces/ha-chore-helper/custom_components"
+    "DEVCONTAINER": "1"
   },
   "customizations": {
     "vscode": {
       "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-python.pylint",
+        "DmitryDorofeev.empty-indent",
+        "EditorConfig.EditorConfig",
+        "charliermarsh.ruff",
+        "christian-kohler.path-intellisense",
+        "eamodio.gitlens",
+        "esbenp.prettier-vscode",
+        "github.vscode-github-actions",
+        "github.vscode-pull-request-github",
+        "ms-azuretools.vscode-docker",
         "ms-python.black-formatter",
         "ms-python.isort",
-        "charliermarsh.ruff",
         "ms-python.mypy-type-checker",
-        "github.vscode-pull-request-github",
-        "ryanluker.vscode-coverage-gutters",
-        "streetsidesoftware.code-spell-checker",
-        "ms-azuretools.vscode-docker",
-        "EditorConfig.EditorConfig",
-        "github.vscode-github-actions",
-        "eamodio.gitlens",
+        "ms-python.pylint",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
         "oderwat.indent-rainbow",
-        "yzhang.markdown-all-in-one",
-        "christian-kohler.path-intellisense",
         "redhat.vscode-yaml",
-        "DmitryDorofeev.empty-indent",
+        "ryanluker.vscode-coverage-gutters",
+        "spmeesseman.vscode-taskexplorer",
+        "streetsidesoftware.code-spell-checker",
         "timonwong.shellcheck",
-        "esbenp.prettier-vscode"
+        "yzhang.markdown-all-in-one"
       ],
       "settings": {
         "terminal.integrated.profiles.linux": {
@@ -47,43 +39,21 @@
           }
         },
         "terminal.integrated.defaultProfile.linux": "zsh",
+        "files.eol": "\n",
+        "editor.tabSize": 2,
         "editor.formatOnPaste": false,
         "editor.formatOnSave": true,
         "editor.formatOnType": true,
         "files.trimTrailingWhitespace": true,
-        "python.defaultInterpreterPath": "/workspaces/ha-chore-helper/.venv/bin/python",
+        "python.linting.pylintEnabled": false,
         "python.linting.enabled": true,
-        "python.linting.pylintEnabled": true,
-        "python.formatting.provider": "black",
-        "python.sortImports.args": [
-          "--profile",
-          "black"
-        ],
-        "[python]": {
-          "editor.defaultFormatter": "ms-python.black-formatter",
-          "editor.codeActionsOnSave": {
-            "source.organizeImports": "explicit"
-          }
-        },
-        "mypy.runUsingActiveInterpreter": true,
-        "ruff.args": [
-          "--config",
-          "/config/pyproject.toml"
-        ]
+        "python.formatting.provider": "black"
       }
     }
   },
   "mounts": [
-    "type=bind,source=${localWorkspaceFolder},target=/config",
-    "type=volume,source=ha-chore-helper-uv-cache,target=/tmp/.uv_cache"
+    "source=${localWorkspaceFolder}/custom_components,target=/config/custom_components,type=bind",
+    "source=${localWorkspaceFolder}/configuration.yaml,target=/config/configuration.yaml,type=bind"
   ],
-  "features": {
-    "ghcr.io/devcontainers/features/common-utils:2": {},
-    "ghcr.io/devcontainers-extra/features/apt-get-packages:1": {
-      "packages": [
-        "ffmpeg",
-        "git"
-      ]
-    }
-  }
+  "runArgs": ["--network=host"]
 }
