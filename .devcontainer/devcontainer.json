@@ -9,7 +9,7 @@
     "DEVCONTAINER": "1",
     "WORKSPACE_FOLDER": "{localWorkspaceFolder}",
   },
-  /*"remoteUser": "vscode",*/
+  "remoteUser": "vscode",
   "customizations": {
     "vscode": {
       "extensions": [
